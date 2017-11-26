@@ -10,6 +10,7 @@ primaryExpression
     |   '(' expression ')'
     ;
 
+
 postfixExpression
     :   primaryExpression
     |   postfixExpression '[' expression ']'
@@ -103,10 +104,9 @@ constantExpression
 // Operations
 typeName
     :   VOID 
-    |   CHAR 
-    |   INT 
-    |   FLOAT 
-    |   UNSIGNED 
+    |   NUM
+    |   STRING
+    |   BOOL
     |   VAR
     ;
 
@@ -158,32 +158,31 @@ multiplicativeOperator
 
 
 //Declarations
-compilationUnit
-    :   translationUnit? EOF
+script
+    :   translationUnit* EOF
     ;
 
 translationUnit
-    :   externalDeclaration
-    |   translationUnit externalDeclaration
-    ;
-
-externalDeclaration
     :   functionDefinition
     |   declaration
-    |   ';'
+    |   statement
     ;
 
 functionDefinition
-    :  typeName? IDENTIFIER '(' parameterList? ')' compoundStatement
+    :  functionDeclaration compoundStatement
     ;
 
 declaration
-    :   typeName initDeclaratorList ';'
+    :   variableDeclaration ';'
+    |   functionDeclaration ';'
     ;
 
-initDeclaratorList
-    :   initDeclarator
-    |   initDeclaratorList ',' initDeclarator
+variableDeclaration
+    :   typeName (initDeclarator ',')* initDeclarator
+    ;
+
+functionDeclarationF
+    :   FUNCTION IDENTIFIER '(' parameterList? ')'
     ;
 
 initDeclarator
@@ -194,8 +193,6 @@ declarator
     :   IDENTIFIER
     |   '(' declarator ')'
     |   declarator '[' assignmentExpression? ']'
-    |   declarator '(' parameterList? ')'
-    |   declarator '(' identifierList? ')'
     ;
 
 parameterList
@@ -218,12 +215,8 @@ initializer
     ;
 
 initializerList
-    :   designation? initializer
-    |   initializerList ',' designation? initializer
-    ;
-
-designation
-    :   designator ASSIGN
+    :   (designator ASSIGN)? initializer
+    |   initializerList ',' (designator ASSIGN)? initializer
     ;
 
 designator
@@ -236,26 +229,21 @@ designator
 statement
     :   compoundStatement
     |   expressionStatement
-    |   selectionStatement
+    |   conditionalStatement
     |   iterationStatement
     |   jumpStatement
     ;
 
 compoundStatement
-    :   '{' blockItem* '}'
-    ;
-
-blockItem
-    :   declaration
-    |   statement
+    :   '{' (declaration | statement)* '}'
     ;
 
 expressionStatement
     :   expression? ';'
     ;
 
-selectionStatement
-    :   IF '(' expression ')' statement ('else' statement)?
+conditionalStatement
+    :   IF '(' expression ')' statement (ELSE statement)?
     ;
 
 iterationStatement

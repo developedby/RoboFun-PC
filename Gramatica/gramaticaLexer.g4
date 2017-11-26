@@ -2,6 +2,7 @@ lexer grammar gramaticaLexer;
 
 // Keywords
 
+FUNCTION :	    'func';
 BREAK :             'break';
 CONTINUE :          'continue';
 DO :                'do';
@@ -11,6 +12,7 @@ IF :                'if';
 RETURN :            'return';
 WHILE :             'while';
 
+
 // Types
 VOID :              'void';
 CHAR :              'char';
@@ -18,8 +20,9 @@ INT :               'int';
 FLOAT :             'float';
 UNSIGNED :          'unsigned';
 VAR :               'var';
-BOOLEAN :           'bool';
-
+BOOL :		    'bool';
+STRING :	    'string';
+NUM :		    'num';
 
 // Separators
 LEFT_PARENTHESIS:   '(';
@@ -74,11 +77,13 @@ LOGICAL_OR :        '||';
 QUESTION:           '?';
 COLON:              ':';
 
+//Constants
 CONSTANT
     :   IntegerConstant
     |   FloatingConstant
     |   CharacterConstant
     |   StringLiteral
+    |   BooleanConstant
     ;
 
 IDENTIFIER
@@ -93,6 +98,11 @@ Letter
 fragment
 Digit
     :   [0-9]
+    ;
+fragment
+BooleanConstant
+    :   'true'
+    |   'false'
     ;
 fragment
 IntegerConstant
